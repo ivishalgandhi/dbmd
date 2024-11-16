@@ -2,7 +2,7 @@
   "name": "dbmd",
   "displayName": "DBMD: SQL Preview",
   "description": "Preview SQL queries in markdown files with SQLite and DuckDB support",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "gandhivishal",
   "author": {
     "name": "Vishal Gandhi"
@@ -41,7 +41,8 @@
   ],
   "activationEvents": [
     "onLanguage:markdown",
-    "onCommand:dbmd.preview"
+    "onCommand:dbmd.preview",
+    "onStartupFinished"
   ],
   "main": "./src/extension.js",
   "contributes": {
@@ -49,9 +50,26 @@
       {
         "command": "dbmd.preview",
         "title": "Preview",
-        "category": "DBMD"
+        "category": "DBMD",
+        "icon": "$(preview)",
+        "enablement": "editorLangId == markdown || dbmdEnabled"
       }
     ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "editorLangId == markdown || dbmdEnabled",
+          "command": "dbmd.preview",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "dbmd.preview",
+          "when": "editorLangId == markdown || dbmdEnabled"
+        }
+      ]
+    },
     "configuration": {
       "title": "DBMD",
       "properties": {

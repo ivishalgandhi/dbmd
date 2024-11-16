@@ -58,71 +58,80 @@ function activate(context) {
     let changeEditorSubscription = null;
 
     // Register the preview command
-    let disposable = vscode.commands.registerCommand('dbmd.preview', () => {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor || editor.document.languageId !== 'markdown') {
-            vscode.window.showErrorMessage('Please open a markdown file to preview SQL results.');
-            return;
-        }
+    const previewCommand = 'dbmd.preview';
+    let disposable = vscode.commands.registerCommand(previewCommand, async () => {
+        try {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor || editor.document.languageId !== 'markdown') {
+                vscode.window.showErrorMessage('Please open a markdown file to preview SQL results.');
+                return;
+            }
 
-        currentDocument = editor.document;
+            currentDocument = editor.document;
 
-        if (currentPanel) {
-            currentPanel.reveal(vscode.ViewColumn.Beside);
-        } else {
-            currentPanel = vscode.window.createWebviewPanel(
-                'sqlPreview',
-                'SQL Preview',
-                vscode.ViewColumn.Beside,
-                {
-                    enableScripts: true,
-                    localResourceRoots: [
-                        vscode.Uri.file(path.join(context.extensionPath, 'styles'))
-                    ]
-                }
+            if (currentPanel) {
+                currentPanel.reveal(vscode.ViewColumn.Beside);
+            } else {
+                currentPanel = vscode.window.createWebviewPanel(
+                    'sqlPreview',
+                    'SQL Preview',
+                    vscode.ViewColumn.Beside,
+                    {
+                        enableScripts: true,
+                        localResourceRoots: [
+                            vscode.Uri.file(path.join(context.extensionPath, 'styles'))
+                        ]
+                    }
+                );
+
+                currentPanel.onDidDispose(() => {
+                    currentPanel = null;
+                    if (changeDocumentSubscription) {
+                        changeDocumentSubscription.dispose();
+                    }
+                    if (changeEditorSubscription) {
+                        changeEditorSubscription.dispose();
+                    }
+                });
+            }
+
+            // Create URI for stylesheet
+            const styleUri = currentPanel.webview.asWebviewUri(
+                vscode.Uri.file(path.join(context.extensionPath, 'styles', 'preview.css'))
             );
 
-            currentPanel.onDidDispose(() => {
-                currentPanel = null;
-                if (changeDocumentSubscription) {
-                    changeDocumentSubscription.dispose();
-                }
-                if (changeEditorSubscription) {
-                    changeEditorSubscription.dispose();
+            await updatePreview(styleUri);
+
+            // Watch for changes in the document
+            if (changeDocumentSubscription) {
+                changeDocumentSubscription.dispose();
+            }
+            changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(async e => {
+                if (currentDocument && e.document === currentDocument) {
+                    await updatePreview(styleUri);
                 }
             });
-        }
 
-        // Create URI for stylesheet
-        const styleUri = currentPanel.webview.asWebviewUri(
-            vscode.Uri.file(path.join(context.extensionPath, 'styles', 'preview.css'))
-        );
-
-        updatePreview(styleUri);
-
-        // Watch for changes in the document
-        if (changeDocumentSubscription) {
-            changeDocumentSubscription.dispose();
-        }
-        changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
-            if (currentDocument && e.document === currentDocument) {
-                updatePreview(styleUri);
+            // Watch for active editor changes
+            if (changeEditorSubscription) {
+                changeEditorSubscription.dispose();
             }
-        });
-
-        // Watch for active editor changes
-        if (changeEditorSubscription) {
-            changeEditorSubscription.dispose();
+            changeEditorSubscription = vscode.window.onDidChangeActiveTextEditor(async editor => {
+                if (editor && editor.document.languageId === 'markdown') {
+                    currentDocument = editor.document;
+                    await updatePreview(styleUri);
+                }
+            });
+        } catch (error) {
+            vscode.window.showErrorMessage(`Error: ${error.message}`);
         }
-        changeEditorSubscription = vscode.window.onDidChangeActiveTextEditor(editor => {
-            if (editor && editor.document.languageId === 'markdown') {
-                currentDocument = editor.document;
-                updatePreview(styleUri);
-            }
-        });
     });
 
+    // Register the command in the global context
     context.subscriptions.push(disposable);
+
+    // Also register it in the window commands
+    vscode.commands.executeCommand('setContext', 'dbmdEnabled', true);
 
     // Function to update preview content
     async function updatePreview(styleUri) {
