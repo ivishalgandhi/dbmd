@@ -2,6 +2,16 @@
 
 All notable changes to the "DBMD: SQL Preview" extension will be documented in this file.
 
+## [1.0.5] - 2024-01-16
+
+### Fixed
+- Switched to @vscode/sqlite3 for better Windows compatibility
+- Improved command visibility in Windows
+- Updated command registration to match VS Code patterns
+- Added enablement condition for better command control
+- Changed to editorLangId for more reliable language detection
+- Added onStartupFinished for better activation timing
+
 ## [1.0.4] - 2024-01-16
 
 ### Fixed

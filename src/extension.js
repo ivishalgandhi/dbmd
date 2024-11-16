@@ -1,6 +1,6 @@
 const vscode = require('vscode');
 const matter = require('gray-matter');
-const sqlite3 = require('sqlite3').verbose();
+const sqlite3 = require('@vscode/sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 const { execSync } = require('child_process');
@@ -14,42 +14,80 @@ const markdownIt = require('markdown-it')({
 const dbHandlers = {
     sqlite: {
         connect: (dbPath) => new Promise((resolve, reject) => {
-            const db = new sqlite3.Database(dbPath, (err) => {
-                if (err) reject(err);
-                else resolve(db);
-            });
+            try {
+                console.log('Attempting to connect to SQLite database:', dbPath);
+                const db = new sqlite3.Database(dbPath, (err) => {
+                    if (err) {
+                        console.error('SQLite connection error:', err);
+                        reject(err);
+                    } else {
+                        console.log('Successfully connected to SQLite database');
+                        resolve(db);
+                    }
+                });
+            } catch (error) {
+                console.error('Error in SQLite connect:', error);
+                reject(error);
+            }
         }),
         query: (db, sql) => new Promise((resolve, reject) => {
-            db.all(sql, (err, rows) => {
-                if (err) reject(err);
-                else resolve(rows);
-            });
+            try {
+                console.log('Executing SQLite query:', sql);
+                db.all(sql, (err, rows) => {
+                    if (err) {
+                        console.error('SQLite query error:', err);
+                        reject(err);
+                    } else {
+                        console.log('Query executed successfully, rows:', rows?.length);
+                        resolve(rows);
+                    }
+                });
+            } catch (error) {
+                console.error('Error in SQLite query:', error);
+                reject(error);
+            }
         }),
         close: (db) => new Promise((resolve, reject) => {
-            db.close((err) => {
-                if (err) reject(err);
-                else resolve();
-            });
+            try {
+                if (db) {
+                    db.close((err) => {
+                        if (err) {
+                            console.error('SQLite close error:', err);
+                            reject(err);
+                        } else {
+                            console.log('SQLite connection closed successfully');
+                            resolve();
+                        }
+                    });
+                } else {
+                    resolve();
+                }
+            } catch (error) {
+                console.error('Error in SQLite close:', error);
+                reject(error);
+            }
         })
     },
     duckdb: {
-        connect: async (dbPath) => dbPath, // Just return the path for CLI usage
+        connect: async (dbPath) => dbPath,
         query: async (dbPath, sql) => {
             try {
+                console.log('Executing DuckDB query:', sql);
                 const result = execSync(
                     `duckdb "${dbPath}" -json -c "${sql.replace(/"/g, '\\"')}"`,
                     { encoding: 'utf8' }
                 );
                 return JSON.parse(result);
             } catch (error) {
+                console.error('DuckDB query error:', error);
                 throw new Error(error.stderr || error.message);
             }
         },
-        close: async () => {} // No need to close for CLI
+        close: async () => {}
     }
 };
 
-function activate(context) {
+async function activate(context) {
     console.log('Markdown SQL Preview is now active');
 
     let currentPanel = null;
@@ -123,14 +161,14 @@ function activate(context) {
             });
         } catch (error) {
             vscode.window.showErrorMessage(`Error: ${error.message}`);
+            console.error(error);
         }
     });
 
-    // Register the command in the global context
+    // Register command and set context
     context.subscriptions.push(previewCommand);
-
-    // Also register it in the window commands
-    vscode.commands.executeCommand('setContext', 'dbmdEnabled', true);
+    await vscode.commands.executeCommand('setContext', 'markdownPreviewEnabled', true);
+    await vscode.commands.executeCommand('setContext', 'markdown-preview-mode', true);
 
     // Function to update preview content
     async function updatePreview(styleUri) {
