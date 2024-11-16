@@ -58,8 +58,7 @@ function activate(context) {
     let changeEditorSubscription = null;
 
     // Register the preview command
-    const previewCommand = 'dbmd.preview';
-    let disposable = vscode.commands.registerCommand(previewCommand, async () => {
+    const previewCommand = vscode.commands.registerCommand('dbmd.preview', async () => {
         try {
             const editor = vscode.window.activeTextEditor;
             if (!editor || editor.document.languageId !== 'markdown') {
@@ -128,7 +127,7 @@ function activate(context) {
     });
 
     // Register the command in the global context
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(previewCommand);
 
     // Also register it in the window commands
     vscode.commands.executeCommand('setContext', 'dbmdEnabled', true);

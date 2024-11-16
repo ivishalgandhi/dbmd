@@ -2,6 +2,14 @@
 
 All notable changes to the "DBMD: SQL Preview" extension will be documented in this file.
 
+## [1.0.4] - 2024-01-16
+
+### Fixed
+- Simplified command registration for better Windows compatibility
+- Changed activation event to "*" for more reliable startup
+- Updated command title and visibility conditions
+- Improved error handling in command registration
+
 ## [1.0.3] - 2024-01-16
 
 ### Fixed
