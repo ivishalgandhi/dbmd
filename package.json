@@ -1,0 +1,88 @@
+{
+  "name": "dbmd",
+  "displayName": "DBMD: SQL Preview",
+  "description": "Preview SQL queries in markdown files with SQLite and DuckDB support",
+  "version": "0.0.1",
+  "publisher": "gandhivishal",
+  "author": {
+    "name": "Vishal Gandhi"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ivishalgandhi/dbmd.git"
+  },
+  "homepage": "https://github.com/ivishalgandhi/dbmd#readme",
+  "bugs": {
+    "url": "https://github.com/ivishalgandhi/dbmd/issues"
+  },
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#2d2d2d",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Notebooks",
+    "Formatters",
+    "Visualization"
+  ],
+  "keywords": [
+    "markdown",
+    "sql",
+    "preview",
+    "sqlite",
+    "duckdb",
+    "database",
+    "query",
+    "visualization"
+  ],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "dbmd.preview",
+        "title": "DBMD: Preview"
+      }
+    ],
+    "configuration": {
+      "title": "DBMD",
+      "properties": {
+        "dbmd.defaultDatabaseType": {
+          "type": "string",
+          "default": "sqlite",
+          "enum": ["sqlite", "duckdb"],
+          "description": "Default database type to use when not specified in frontmatter"
+        }
+      }
+    },
+    "markdown": {
+      "markdownItPlugins": true
+    },
+    "markdown.previewStyles": [
+      "./styles/preview.css"
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "18.x",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.2",
+    "@vscode/vsce": "^2.22.0"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.6",
+    "gray-matter": "^4.0.3",
+    "markdown-it": "^13.0.2"
+  }
+}

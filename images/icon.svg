@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" version="1.1" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <rect width="128" height="128" fill="#2d2d2d"/>
+  <g fill="#fff" stroke-width=".26458">
+   <path d="m32 24h64v12h-64z" fill="#0098dd"/>
+   <path d="m32 44h64v12h-64z" fill="#29b6f6"/>
+   <path d="m32 64h64v12h-64z" fill="#4fc3f7"/>
+   <g fill="#fff">
+    <path d="m40 28h40v4h-40z"/>
+    <path d="m40 48h48v4h-48z"/>
+    <path d="m40 68h36v4h-36z"/>
+    <path d="m32 92h64v4h-64z"/>
+    <path d="m32 84h64v4h-64z"/>
+   </g>
+  </g>
+ </g>
+</svg>
