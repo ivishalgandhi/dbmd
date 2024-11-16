@@ -57,6 +57,73 @@ function activate(context) {
     let changeDocumentSubscription = null;
     let changeEditorSubscription = null;
 
+    // Register the preview command
+    let disposable = vscode.commands.registerCommand('dbmd.preview', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor || editor.document.languageId !== 'markdown') {
+            vscode.window.showErrorMessage('Please open a markdown file to preview SQL results.');
+            return;
+        }
+
+        currentDocument = editor.document;
+
+        if (currentPanel) {
+            currentPanel.reveal(vscode.ViewColumn.Beside);
+        } else {
+            currentPanel = vscode.window.createWebviewPanel(
+                'sqlPreview',
+                'SQL Preview',
+                vscode.ViewColumn.Beside,
+                {
+                    enableScripts: true,
+                    localResourceRoots: [
+                        vscode.Uri.file(path.join(context.extensionPath, 'styles'))
+                    ]
+                }
+            );
+
+            currentPanel.onDidDispose(() => {
+                currentPanel = null;
+                if (changeDocumentSubscription) {
+                    changeDocumentSubscription.dispose();
+                }
+                if (changeEditorSubscription) {
+                    changeEditorSubscription.dispose();
+                }
+            });
+        }
+
+        // Create URI for stylesheet
+        const styleUri = currentPanel.webview.asWebviewUri(
+            vscode.Uri.file(path.join(context.extensionPath, 'styles', 'preview.css'))
+        );
+
+        updatePreview(styleUri);
+
+        // Watch for changes in the document
+        if (changeDocumentSubscription) {
+            changeDocumentSubscription.dispose();
+        }
+        changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
+            if (currentDocument && e.document === currentDocument) {
+                updatePreview(styleUri);
+            }
+        });
+
+        // Watch for active editor changes
+        if (changeEditorSubscription) {
+            changeEditorSubscription.dispose();
+        }
+        changeEditorSubscription = vscode.window.onDidChangeActiveTextEditor(editor => {
+            if (editor && editor.document.languageId === 'markdown') {
+                currentDocument = editor.document;
+                updatePreview(styleUri);
+            }
+        });
+    });
+
+    context.subscriptions.push(disposable);
+
     // Function to update preview content
     async function updatePreview(styleUri) {
         if (!currentPanel || !currentDocument) return;
@@ -155,78 +222,6 @@ function activate(context) {
 
     // Debounced update function
     const debouncedUpdate = debounce(updatePreview, 500);
-
-    // Register the preview command
-    let disposable = vscode.commands.registerCommand('dbmd.preview', () => {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            vscode.window.showErrorMessage('No active editor found');
-            return;
-        }
-
-        if (editor.document.languageId !== 'markdown') {
-            vscode.window.showErrorMessage('Active editor does not contain a markdown document');
-            return;
-        }
-
-        if (currentPanel) {
-            currentPanel.reveal(vscode.ViewColumn.Two);
-            return;
-        }
-
-        currentPanel = vscode.window.createWebviewPanel(
-            'sqlPreview',
-            'SQL Preview',
-            vscode.ViewColumn.Two,
-            {
-                enableScripts: true,
-                localResourceRoots: [
-                    vscode.Uri.file(path.join(context.extensionPath, 'styles'))
-                ]
-            }
-        );
-
-        // Get path to style file
-        const stylePathOnDisk = vscode.Uri.file(path.join(context.extensionPath, 'styles', 'preview.css'));
-        const styleUri = currentPanel.webview.asWebviewUri(stylePathOnDisk);
-
-        // Update content initially
-        currentDocument = vscode.window.activeTextEditor?.document;
-        updatePreview(styleUri);
-
-        // Update content when the active editor changes
-        changeEditorSubscription = vscode.window.onDidChangeActiveTextEditor(editor => {
-            if (editor) {
-                currentDocument = editor.document;
-                updatePreview(styleUri);
-            }
-        });
-
-        // Update content when the document changes
-        changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
-            if (currentDocument && e.document.uri.toString() === currentDocument.uri.toString()) {
-                updatePreview(styleUri);
-            }
-        });
-
-        // Clean up subscriptions when panel is closed
-        currentPanel.onDidDispose(() => {
-            changeDocumentSubscription.dispose();
-            changeEditorSubscription.dispose();
-            currentPanel = null;
-        });
-
-        // Handle messages from the webview
-        currentPanel.webview.onDidReceiveMessage(message => {
-            switch (message.command) {
-                case 'refresh':
-                    updatePreview(styleUri);
-                    break;
-            }
-        });
-    });
-
-    context.subscriptions.push(disposable);
 
     // Register markdown-it plugin for native preview
     return {

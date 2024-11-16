@@ -1,6 +1,5 @@
 .vscode/**
 .vscode-test/**
-node_modules/**
 .gitignore
 .yarnrc
 webpack.config.js

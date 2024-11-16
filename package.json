@@ -2,7 +2,7 @@
   "name": "dbmd",
   "displayName": "DBMD: SQL Preview",
   "description": "Preview SQL queries in markdown files with SQLite and DuckDB support",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "publisher": "gandhivishal",
   "author": {
     "name": "Vishal Gandhi"
@@ -47,7 +47,8 @@
     "commands": [
       {
         "command": "dbmd.preview",
-        "title": "DBMD: Preview"
+        "title": "Preview",
+        "category": "DBMD"
       }
     ],
     "configuration": {
@@ -60,16 +61,11 @@
           "description": "Default database type to use when not specified in frontmatter"
         }
       }
-    },
-    "markdown": {
-      "markdownItPlugins": true
-    },
-    "markdown.previewStyles": [
-      "./styles/preview.css"
-    ]
+    }
   },
   "scripts": {
     "lint": "eslint .",
+    "prepackage": "npm install",
     "package": "vsce package",
     "publish": "vsce publish"
   },
