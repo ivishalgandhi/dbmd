@@ -22,7 +22,7 @@
   },
   "engines": {
     "vscode": "^1.85.0",
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "categories": [
     "Programming Languages",
@@ -83,7 +83,10 @@
         "dbmd.defaultDatabaseType": {
           "type": "string",
           "default": "sqlite",
-          "enum": ["sqlite", "duckdb"],
+          "enum": [
+            "sqlite",
+            "duckdb"
+          ],
           "description": "Default database type to use when not specified in frontmatter"
         }
       }
@@ -96,14 +99,14 @@
     "publish": "vsce publish"
   },
   "devDependencies": {
+    "@types/node": "20.x",
     "@types/vscode": "^1.85.0",
-    "@types/node": "18.x",
+    "@vscode/vsce": "^2.22.0",
     "eslint": "^8.54.0",
-    "typescript": "^5.3.2",
-    "@vscode/vsce": "^2.22.0"
+    "typescript": "^5.3.2"
   },
   "dependencies": {
-    "better-sqlite3": "11.5.0",
+    "better-sqlite3": "*",
     "gray-matter": "^4.0.3",
     "markdown-it": "^13.0.2"
   }

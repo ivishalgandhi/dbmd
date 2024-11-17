@@ -4,8 +4,14 @@ All notable changes to the "DBMD: SQL Preview" extension will be documented in t
 
 ## [1.0.5] - 2024-01-16
 
+### Changed
+- Switched to better-sqlite3 v11.5.0 for improved performance and reliability
+- Added synchronous SQLite operations for better error handling
+- Updated Node.js engine requirement to >=18.0.0
+- Improved cross-platform compatibility
+- Enhanced error logging and debugging capabilities
+
 ### Fixed
-- Switched to @vscode/sqlite3 for better Windows compatibility
 - Improved command visibility in Windows
 - Updated command registration to match VS Code patterns
 - Added enablement condition for better command control
