@@ -2,7 +2,7 @@
   "name": "dbmd",
   "displayName": "DBMD: SQL Preview",
   "description": "Preview SQL queries in markdown files with SQLite and DuckDB support",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "publisher": "gandhivishal",
   "author": {
     "name": "Vishal Gandhi"
@@ -96,18 +96,22 @@
     "lint": "eslint .",
     "prepackage": "npm install",
     "package": "vsce package",
-    "publish": "vsce publish"
+    "publish": "vsce publish",
+    "release": "gh release create v$npm_package_version --title \"Release v$npm_package_version\" --notes-file CHANGELOG.md dbmd-$npm_package_version.vsix",
+    "rebuild-sqlite3": "npm rebuild @vscode/sqlite3 --build-from-source",
+    "install-windows-x64": "npm install @vscode/sqlite3 --build-from-source --target_arch=x64 --target_platform=win32"
   },
   "devDependencies": {
     "@types/node": "20.x",
     "@types/vscode": "^1.85.0",
     "@vscode/vsce": "^2.22.0",
     "eslint": "^8.54.0",
-    "typescript": "^5.3.2"
+    "typescript": "^5.3.2",
+    "node-gyp": "^10.0.1"
   },
-"dependencies": {
+  "dependencies": {
     "@vscode/sqlite3": "^5.1.8-vscode",
     "gray-matter": "^4.0.3",
     "markdown-it": "^13.0.2"
-}
+  }
 }
