@@ -50,7 +50,7 @@
     "commands": [
       {
         "command": "dbmd.preview",
-        "title": "SQL Preview",
+        "title": "Preview",
         "category": "DBMD",
         "enablement": "editorLangId == markdown"
       }
@@ -105,9 +105,9 @@
     "eslint": "^8.54.0",
     "typescript": "^5.3.2"
   },
-  "dependencies": {
-    "better-sqlite3": "*",
+"dependencies": {
+    "@vscode/sqlite3": "^5.1.8-vscode",
     "gray-matter": "^4.0.3",
     "markdown-it": "^13.0.2"
-  }
+}
 }

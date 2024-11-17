@@ -6,3 +6,11 @@ out/
 dist/
 coverage/
 *.log
+*.vsix
+node_modules/
+package-lock.json
+vsix_contents/
+node_modules/
+*.vsix
+vsix_contents/
+package-lock.json
