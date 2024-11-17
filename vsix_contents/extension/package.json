@@ -21,8 +21,7 @@
     "theme": "dark"
   },
   "engines": {
-    "vscode": "^1.85.0",
-    "node": ">=18.0.0"
+    "vscode": "^1.85.0"
   },
   "categories": [
     "Programming Languages",
@@ -103,7 +102,7 @@
     "@vscode/vsce": "^2.22.0"
   },
   "dependencies": {
-    "better-sqlite3": "11.5.0",
+    "@vscode/sqlite3": "^5.1.6-vscode",
     "gray-matter": "^4.0.3",
     "markdown-it": "^13.0.2"
   }

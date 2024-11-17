@@ -1,0 +1,187 @@
+.markdown-content {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", system-ui, "Ubuntu", "Droid Sans", sans-serif;
+    color: var(--vscode-editor-foreground);
+    line-height: 1.6;
+    padding: 20px;
+    font-size: 14px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.markdown-content h1 { font-size: 2em; }
+.markdown-content h2 { font-size: 1.5em; }
+.markdown-content h3 { font-size: 1.25em; }
+.markdown-content h4 { font-size: 1.1em; }
+.markdown-content h5 { font-size: 0.9em; }
+.markdown-content h6 { font-size: 0.8em; }
+
+.preview-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    z-index: 1000;
+}
+
+.refresh-button {
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    padding: 4px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.refresh-button:hover {
+    background: var(--vscode-button-hoverBackground);
+}
+
+.refresh-button svg {
+    width: 14px;
+    height: 14px;
+}
+
+.sql-preview {
+    margin: 1.5em 0;
+    padding: 1em;
+    border: 1px solid var(--vscode-panel-border);
+    border-radius: 4px;
+    background-color: var(--vscode-editor-background);
+}
+
+.sql-preview h4 {
+    margin-top: 0;
+    margin-bottom: 1em;
+    color: var(--vscode-editor-foreground);
+}
+
+.sql-preview-query {
+    margin-bottom: 1.5em;
+}
+
+.sql-preview-query pre {
+    margin: 0;
+    padding: 1em;
+    background-color: var(--vscode-textBlockQuote-background);
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+.sql-preview-error {
+    color: var(--vscode-errorForeground);
+    padding: 1em;
+    margin: 1em 0;
+    border: 1px solid var(--vscode-errorForeground);
+    border-radius: 4px;
+    font-family: "SF Mono", Monaco, Menlo, Consolas, "Ubuntu Mono", monospace;
+    font-size: 13px;
+}
+
+.sql-preview-results {
+    margin-top: 1em;
+}
+
+/* Markdown table styles */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+    font-size: 14px;
+    line-height: 1.6;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", system-ui, "Ubuntu", "Droid Sans", sans-serif;
+}
+
+th, td {
+    border: 1px solid var(--vscode-panel-border);
+}
+
+th {
+    font-weight: 600;
+    background-color: var(--vscode-editor-lineHighlightBackground);
+    border-bottom: 2px solid var(--vscode-panel-border);
+    padding: 8px 16px;
+    text-align: left;
+}
+
+td {
+    padding: 6px 16px;
+    border-bottom: 1px solid var(--vscode-panel-border);
+    vertical-align: top;
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: var(--vscode-editor-lineHighlightBackground);
+}
+
+td:nth-child(n+2):not(:last-child) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* General markdown styles */
+p {
+    margin: 1em 0;
+    line-height: 1.6;
+}
+
+code {
+    font-family: "SF Mono", Monaco, Menlo, Consolas, "Ubuntu Mono", monospace;
+    font-size: 13px;
+    background-color: var(--vscode-textBlockQuote-background);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
+pre code {
+    display: block;
+    padding: 16px;
+    overflow-x: auto;
+    line-height: 1.45;
+    background-color: transparent;
+    border-radius: 3px;
+}
+
+blockquote {
+    margin: 1em 0;
+    padding-left: 1em;
+    border-left: 3px solid var(--vscode-textBlockQuote-border);
+    color: var(--vscode-textBlockQuote-foreground);
+    font-style: italic;
+}
+
+ul, ol {
+    margin: 1em 0;
+    padding-left: 2em;
+}
+
+li {
+    margin: 0.5em 0;
+}
+
+input[type="checkbox"] {
+    margin-right: 0.5em;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--vscode-panel-border);
+    margin: 1em 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+h1 { font-size: 2em; }
+h2 { font-size: 1.5em; }
+h3 { font-size: 1.25em; }
+h4 { font-size: 1.1em; }
+h5 { font-size: 0.9em; }
+h6 { font-size: 0.8em; }
