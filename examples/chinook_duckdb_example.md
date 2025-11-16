@@ -31,7 +31,7 @@ JOIN Track t ON al.AlbumId = t.AlbumId
 JOIN Genre g ON t.GenreId = g.GenreId
 GROUP BY ar.ArtistId
 ORDER BY Albums DESC
-LIMIT 10;
+LIMIT 5;
 ```
 
 ### Sales Analysis with Window Functions
