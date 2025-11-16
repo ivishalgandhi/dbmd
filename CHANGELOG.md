@@ -2,55 +2,32 @@
 
 All notable changes to the "DBMD: SQL Preview" extension will be documented in this file.
 
-## [Unreleased]
+## [1.0.6] - 2025-11-15
 
 ### Added
 - Native VS Code markdown preview integration with `markdown.markdownItPlugins`
-- HTML table rendering for SQL query results
+- Chinook database examples (SQLite and DuckDB versions) - industry-standard music store database
+- HTML table rendering for SQL query results in native preview
 - Cross-platform path handling with automatic resolution
-- Comprehensive documentation suite (README, USAGE_GUIDE, DEPLOYMENT, CONTRIBUTING)
-- Improved npm scripts for build, package, and publish workflows
-- Clean and reinstall scripts for development
-- Enhanced .vscodeignore for cleaner packages
-- Platform-specific installation and usage guides
+- DuckDB-specific SQL syntax examples (ANY_VALUE, window functions, CTEs)
 
 ### Fixed
 - Native markdown preview not rendering SQL results (added markdown-it plugin)
-- Document path resolution using multiple fallback strategies
+- Document path resolution using multiple fallback strategies (env.documentPath, lastMarkdownDocument, activeTextEditor)
 - DuckDB CLI integration with proper command syntax
-- HTML table styling with borders and proper formatting
+- HTML table styling with inline CSS and proper formatting
 - Cross-platform compatibility for Windows, macOS, and Linux
 
 ### Changed
 - Refactored `getQueryResultHtml` to return proper HTML tables instead of markdown
+- Consolidated documentation into single README.md
+- Removed redundant documentation files (USAGE_GUIDE, DEPLOYMENT, TESTING_GUIDE, QUICK_START, CONTRIBUTING)
+- Replaced simple test examples with professional Chinook database examples
+- Cleaned up examples directory (removed population data, kept only Chinook)
 - Improved error messages with better context
-- Updated package.json with enhanced scripts and metadata
-- Professional documentation following FAANG standards
+- Simplified npm scripts to prevent circular dependencies
 
-## [1.0.6] - 2024-01-16
-
-### Added
-- Cross-platform SQLite support using @vscode/sqlite3
-- Enhanced error logging and debugging capabilities
-- Improved database connection reliability
-
-### Changed
-- Switched to @vscode/sqlite3 v5.1.8 for better platform compatibility
-- Updated SQLite implementation to use callback-based API
-- Simplified command title to "Preview" under DBMD category
-- Improved error messages for better user experience
-
-### Fixed
-- Cross-platform compatibility issues on Windows and macOS
-- SQLite database connection reliability
-- Command visibility in VS Code command palette
-
-### Security
-- Enforced read-only database access
-- Enhanced secure file path handling
-- Improved error message sanitization
-
-## [1.0.5] - 2024-01-16
+## [1.0.5] - 2024-11-15
 
 ### Changed
 - Switched to better-sqlite3 v11.5.0 for improved performance and reliability
