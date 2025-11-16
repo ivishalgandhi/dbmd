@@ -143,27 +143,13 @@ ORDER BY Revenue DESC;
 
 ### External API Integration - GitHub Top Repositories
 
-DuckDB can fetch data from REST APIs using the `httpfs` extension. Query GitHub directly without any ETL.
+DuckDB can fetch data from REST APIs using the `httpfs` extension. All statements must be in a single query block.
 
 ```sql
-INSTALL httpfs;
-LOAD httpfs;
-SET unsafe_disable_etag_checks = true;
-
--- Fetch top GitHub repositories by stars
-SELECT 
-    name as Repository,
-    language as Language,
-    stargazers_count as Stars,
-    forks_count as Forks,
-    description as Description
-FROM read_json_auto('https://api.github.com/users/github/repos')
-WHERE language IS NOT NULL
-ORDER BY stargazers_count DESC
-LIMIT 10;
+INSTALL httpfs; LOAD httpfs; SET unsafe_disable_etag_checks = true; SELECT name as Repository, language as Language, stargazers_count as Stars, forks_count as Forks, LEFT(description, 60) as Description FROM read_json_auto('https://api.github.com/users/github/repos') WHERE language IS NOT NULL ORDER BY stargazers_count DESC LIMIT 10;
 ```
 
-**Note**: API queries require internet connection. Use `SET unsafe_disable_etag_checks = true;` for frequently changing endpoints.
+**Note**: API queries require internet connection and must combine INSTALL, LOAD, and SELECT in one statement.
 
 ## About the Chinook Database
 
