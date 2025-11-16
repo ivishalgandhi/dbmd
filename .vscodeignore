@@ -15,25 +15,13 @@ tsconfig.json
 **/*.map
 **/*.ts
 
-# Documentation (keep essential ones)
-TESTING_GUIDE.md
-DEPLOYMENT.md
-CONTRIBUTING.md
-
 # Output directories
 dist/**
-node_modules/**
 **/*.vsix
 
-# Test files and databases
+# Test files
 examples/test.md
 examples/test.db
-
-# Example databases (users should download fresh copies)
-examples/*.db
-examples/*.duckdb
-examples/*.sqlite
-examples/**/*.sql
 
 # Logs and temp files
 *.log

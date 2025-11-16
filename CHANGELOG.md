@@ -2,6 +2,17 @@
 
 All notable changes to the "DBMD: SQL Preview" extension will be documented in this file.
 
+## [1.0.7] - 2025-11-15
+
+### Fixed
+- **Critical**: Extension not loading - included node_modules dependencies in package
+- Missing runtime dependencies (@vscode/sqlite3, markdown-it, gray-matter)
+- Command 'dbmd.preview' not found error
+
+### Changed
+- Updated .vscodeignore to include necessary node_modules
+- Removed overly aggressive file exclusions
+
 ## [1.0.6] - 2025-11-15
 
 ### Added
