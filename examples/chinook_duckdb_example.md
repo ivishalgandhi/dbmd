@@ -141,34 +141,29 @@ HAVING COUNT(il.InvoiceLineId) > 0
 ORDER BY Revenue DESC;
 ```
 
-## DuckDB Features Demonstrated
+### External API Integration - GitHub Top Repositories
 
-- **Window Functions**: RANK(), NTILE(), LAG(), SUM() OVER()
-- **Statistical Functions**: STDDEV(), AVG(), MIN(), MAX()
-- **Date Functions**: EXTRACT(YEAR/MONTH)
-- **Aggregations**: COUNT(), SUM(), AVG() with DISTINCT
-- **CTEs**: WITH clauses for complex queries
-- **ANY_VALUE()**: DuckDB's aggregate for non-grouped columns
-- **NULLIF()**: Handle division by zero
-- **CASE Expressions**: Conditional logic
-- **Percentage Calculations**: Comparing to totals
-- **Growth Analysis**: Period-over-period comparisons
+DuckDB can fetch data from REST APIs using the `httpfs` extension. Query GitHub directly without any ETL.
 
-## DuckDB vs SQLite
+```sql
+INSTALL httpfs;
+LOAD httpfs;
+SET unsafe_disable_etag_checks = true;
 
-DuckDB excels at:
-- ✅ Analytical queries (OLAP workloads)
-- ✅ Complex aggregations and window functions
-- ✅ Statistical analysis (STDDEV, MEDIAN, etc.)
-- ✅ Columnar storage for fast aggregations
-- ✅ Advanced SQL features (CTEs, window functions)
-- ✅ Larger datasets and parallel processing
+-- Fetch top GitHub repositories by stars
+SELECT 
+    name as Repository,
+    language as Language,
+    stargazers_count as Stars,
+    forks_count as Forks,
+    description as Description
+FROM read_json_auto('https://api.github.com/users/github/repos')
+WHERE language IS NOT NULL
+ORDER BY stargazers_count DESC
+LIMIT 10;
+```
 
-Perfect for:
-- Business intelligence and reporting
-- Data analysis and exploration
-- Time-series analysis
-- Statistical computations
+**Note**: API queries require internet connection. Use `SET unsafe_disable_etag_checks = true;` for frequently changing endpoints.
 
 ## About the Chinook Database
 
@@ -180,13 +175,8 @@ The Chinook database is based on the Chinook Digital Media Store sample database
 
 ## Try It Yourself
 
-1. Open this file in VS Code
+1. Open this file in VS Code. Install DBMD extension.
 2. Press `Cmd+Shift+V` / `Ctrl+Shift+V` for native preview
 3. All SQL queries will execute and display results as tables
 4. Modify queries and save to see updated results
 
-Experiment with DuckDB's advanced features:
-- Window functions for ranking and analysis
-- Statistical functions for data science
-- CTEs for complex multi-step queries
-- Time-series analysis with date functions
