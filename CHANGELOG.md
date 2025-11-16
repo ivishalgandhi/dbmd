@@ -2,6 +2,31 @@
 
 All notable changes to the "DBMD: SQL Preview" extension will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- Native VS Code markdown preview integration with `markdown.markdownItPlugins`
+- HTML table rendering for SQL query results
+- Cross-platform path handling with automatic resolution
+- Comprehensive documentation suite (README, USAGE_GUIDE, DEPLOYMENT, CONTRIBUTING)
+- Improved npm scripts for build, package, and publish workflows
+- Clean and reinstall scripts for development
+- Enhanced .vscodeignore for cleaner packages
+- Platform-specific installation and usage guides
+
+### Fixed
+- Native markdown preview not rendering SQL results (added markdown-it plugin)
+- Document path resolution using multiple fallback strategies
+- DuckDB CLI integration with proper command syntax
+- HTML table styling with borders and proper formatting
+- Cross-platform compatibility for Windows, macOS, and Linux
+
+### Changed
+- Refactored `getQueryResultHtml` to return proper HTML tables instead of markdown
+- Improved error messages with better context
+- Updated package.json with enhanced scripts and metadata
+- Professional documentation following FAANG standards
+
 ## [1.0.6] - 2024-01-16
 
 ### Added

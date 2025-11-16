@@ -1,13 +1,43 @@
+# Development files
 .vscode/**
 .vscode-test/**
+.github/**
+.git/**
 .gitignore
 .yarnrc
+.DS_Store
+.npmrc
+
+# Build files
 webpack.config.js
-**/tsconfig.json
+tsconfig.json
 **/.eslintrc.json
 **/*.map
 **/*.ts
-.github/**
-.git/**
+
+# Documentation (keep essential ones)
+TESTING_GUIDE.md
+DEPLOYMENT.md
+CONTRIBUTING.md
+
+# Output directories
+dist/**
+node_modules/**
 **/*.vsix
-.DS_Store
+
+# Test files and databases
+examples/test.md
+examples/test.db
+
+# Example databases (users should download fresh copies)
+examples/*.db
+examples/*.duckdb
+examples/*.sqlite
+examples/**/*.sql
+
+# Logs and temp files
+*.log
+npm-debug.log*
+*.tmp
+*.temp
+

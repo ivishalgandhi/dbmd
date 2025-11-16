@@ -94,6 +94,19 @@ async function activate(context) {
     let currentDocument = null;
     let changeDocumentSubscription = null;
     let changeEditorSubscription = null;
+    let lastMarkdownDocument = null; // Track last markdown document for native preview
+
+    // Track active markdown documents
+    vscode.window.onDidChangeActiveTextEditor(editor => {
+        if (editor && editor.document.languageId === 'markdown') {
+            lastMarkdownDocument = editor.document;
+        }
+    });
+
+    // Initialize with current editor if it's markdown
+    if (vscode.window.activeTextEditor?.document.languageId === 'markdown') {
+        lastMarkdownDocument = vscode.window.activeTextEditor.document;
+    }
 
     // Register the preview command
     const previewCommand = vscode.commands.registerCommand('dbmd.preview', async () => {
@@ -278,39 +291,57 @@ async function activate(context) {
                 if (token.info === 'sql') {
                     try {
                         const query = token.content.trim();
-                        const document = vscode.window.activeTextEditor?.document;
                         
-                        if (!document) {
-                            return `<div class="sql-preview-error">No active document</div>`;
+                        // Try multiple ways to get document path
+                        let documentPath = env.documentPath;
+                        
+                        // Fallback to lastMarkdownDocument if env.documentPath not available
+                        if (!documentPath && lastMarkdownDocument) {
+                            documentPath = lastMarkdownDocument.uri.fsPath;
+                        }
+                        
+                        // Another fallback: try to get from workspace
+                        if (!documentPath) {
+                            const editor = vscode.window.activeTextEditor;
+                            if (editor?.document.languageId === 'markdown') {
+                                documentPath = editor.document.uri.fsPath;
+                            }
+                        }
+                        
+                        if (!documentPath) {
+                            return `<div class="sql-preview-error">Cannot determine document path. Please save your markdown file first.</div>`;
                         }
 
-                        const content = document.getText();
-                        const { data: frontMatter } = matter(content);
+                        // Read frontmatter from the document
+                        const documentContent = fs.readFileSync(documentPath, 'utf8');
+                        const { data: frontMatter } = matter(documentContent);
 
                         if (!frontMatter.database) {
                             return `<div class="sql-preview-error">No database path specified in frontmatter</div>`;
                         }
 
-                        const dbPath = path.resolve(path.dirname(document.uri.fsPath), frontMatter.database);
+                        const dbPath = path.resolve(path.dirname(documentPath), frontMatter.database);
                         if (!fs.existsSync(dbPath)) {
                             return `<div class="sql-preview-error">Database file not found: ${dbPath}</div>`;
                         }
 
                         // Determine database type
-                        const dbType = frontMatter.dbType || vscode.workspace.getConfiguration('markdown-sql-preview').get('defaultDatabaseType') || 'sqlite';
-                        if (!dbHandlers[dbType]) {
-                            return `<div class="sql-preview-error">Unsupported database type: ${dbType}</div>`;
+                        const dbType = frontMatter.dbType || vscode.workspace.getConfiguration('dbmd').get('defaultDatabaseType') || 'sqlite';
+                        
+                        // Execute query synchronously using CLI
+                        let results;
+                        if (dbType === 'duckdb') {
+                            results = execSync(
+                                `duckdb "${dbPath}" -json -c "${query.replace(/"/g, '\\"')}"`,
+                                { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }
+                            );
+                        } else {
+                            // SQLite
+                            results = execSync(
+                                `sqlite3 -json "${dbPath}" "${query.replace(/"/g, '\\"')}"`,
+                                { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }
+                            );
                         }
-
-                        const handler = dbHandlers[dbType];
-                        const db = handler.connect(dbPath);
-
-                        // Execute query synchronously using sqlite3 CLI
-                        const execSync = require('child_process').execSync;
-                        const results = execSync(
-                            `sqlite3 -json "${dbPath}" "${query.replace(/"/g, '\\"')}"`,
-                            { encoding: 'utf8' }
-                        );
 
                         let rows;
                         try {
@@ -319,14 +350,16 @@ async function activate(context) {
                                 rows = [];
                             }
                         } catch (e) {
+                            // Fallback for non-JSON output
                             rows = results.trim().split('\n').filter(line => line.length > 0).map(line => ({
                                 result: line
                             }));
                         }
 
-                        return getQueryResultHtml({ query, rows });
+                        return getQueryResultHtml({ query, rows, showQuery: frontMatter.showQuery });
                     } catch (error) {
-                        return getQueryResultHtml({ query: token.content, error: error.message });
+                        const errorMessage = error.stderr || error.message || String(error);
+                        return getQueryResultHtml({ query: token.content, error: errorMessage });
                     }
                 }
                 return fence(tokens, idx, options, env, self);
@@ -338,52 +371,50 @@ async function activate(context) {
 }
 
 function getQueryResultHtml(result) {
-    // Escape any markdown special characters in the HTML
-    const escapeMarkdown = (str) => {
-        return str.replace(/[_*[\]()]/g, '\\$&');
+    // Escape HTML special characters
+    const escapeHtml = (str) => {
+        return str.replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;')
+                  .replace(/"/g, '&quot;')
+                  .replace(/'/g, '&#039;');
     };
 
     // Only show query if showQuery is explicitly true
     const showQuery = result.showQuery === true;
 
-    const html = `
-<div class="sql-preview">
-${showQuery ? `
-<div class="sql-preview-query">
-
-#### Query:
-\`\`\`sql
-${result.query}
-\`\`\`
-</div>
-
-` : ''}
-${result.error ? 
-    `<div class="sql-preview-error">
-
-**Error:** ${escapeMarkdown(result.error)}
-
-</div>
-
-` :
-    result.rows && result.rows.length > 0 ? `
-<div class="sql-preview-results">
-
-| ${Object.keys(result.rows[0]).join(' | ')} |
-| ${Object.keys(result.rows[0]).map(() => '---').join(' | ')} |
-${result.rows.map(row => 
-    `| ${Object.values(row).map(value => escapeMarkdown(String(value === null ? 'NULL' : value))).join(' | ')} |`
-).join('\n')}
-
-</div>
-
-` : `
-<p>No results</p>
-
-`}
-</div>
-
-`;
+    let html = '<div class="sql-preview">';
+    
+    if (showQuery) {
+        html += `<div class="sql-preview-query"><h4>Query:</h4><pre><code class="language-sql">${escapeHtml(result.query)}</code></pre></div>`;
+    }
+    
+    if (result.error) {
+        html += `<div class="sql-preview-error" style="color: #f14c4c; padding: 10px; border-left: 3px solid #f14c4c; background: rgba(241, 76, 76, 0.1);"><strong>Error:</strong> ${escapeHtml(result.error)}</div>`;
+    } else if (result.rows && result.rows.length > 0) {
+        // Generate HTML table
+        const headers = Object.keys(result.rows[0]);
+        html += '<table style="border-collapse: collapse; width: 100%; margin: 10px 0;">';
+        html += '<thead><tr>';
+        headers.forEach(header => {
+            html += `<th style="border: 1px solid #424242; padding: 8px; background: #1e1e1e; text-align: left;">${escapeHtml(String(header))}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+        
+        result.rows.forEach(row => {
+            html += '<tr>';
+            Object.values(row).forEach(value => {
+                const displayValue = value === null ? 'NULL' : String(value);
+                html += `<td style="border: 1px solid #424242; padding: 8px;">${escapeHtml(displayValue)}</td>`;
+            });
+            html += '</tr>';
+        });
+        html += '</tbody></table>';
+    } else {
+        html += '<p style="color: #888; font-style: italic;">No results</p>';
+    }
+    
+    html += '</div>';
     return html;
 }
 

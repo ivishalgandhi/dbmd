@@ -90,16 +90,17 @@
           "description": "Default database type to use when not specified in frontmatter"
         }
       }
-    }
+    },
+    "markdown.markdownItPlugins": true
   },
   "scripts": {
+    "watch": "echo 'Extension is JavaScript-based - no compilation needed. Press F5 to debug.'",
     "lint": "eslint .",
-    "prepackage": "npm install",
-    "package": "vsce package",
+    "test": "echo 'No automated tests configured yet. Run manual tests via F5.' && exit 0",
+    "package": "vsce package --out dist/",
     "publish": "vsce publish",
-    "release": "gh release create v$npm_package_version --title \"Release v$npm_package_version\" --notes-file CHANGELOG.md dbmd-$npm_package_version.vsix",
-    "rebuild-sqlite3": "npm rebuild @vscode/sqlite3 --build-from-source",
-    "install-windows-x64": "npm install @vscode/sqlite3 --build-from-source --target_arch=x64 --target_platform=win32"
+    "clean": "rm -rf dist/ node_modules/ *.vsix",
+    "reinstall": "npm run clean && npm install"
   },
   "devDependencies": {
     "@types/node": "20.x",
