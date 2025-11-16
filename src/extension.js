@@ -354,10 +354,10 @@ function getQueryResultHtml(result) {
     } else if (result.rows && result.rows.length > 0) {
         // Generate HTML table
         const headers = Object.keys(result.rows[0]);
-        html += '<table style="border-collapse: collapse; width: 100%; margin: 10px 0;">';
+        html += '<table style="border-collapse: collapse; width: 100%; margin: 10px 0; border: 1px solid var(--vscode-editor-lineHighlightBorder);">';
         html += '<thead><tr>';
         headers.forEach(header => {
-            html += `<th style="border: 1px solid #424242; padding: 8px; background: #1e1e1e; text-align: left;">${escapeHtml(String(header))}</th>`;
+            html += `<th style="border: 1px solid var(--vscode-editor-lineHighlightBorder); padding: 8px; text-align: left; font-weight: 600;">${escapeHtml(String(header))}</th>`;
         });
         html += '</tr></thead><tbody>';
         
@@ -365,7 +365,7 @@ function getQueryResultHtml(result) {
             html += '<tr>';
             Object.values(row).forEach(value => {
                 const displayValue = value === null ? 'NULL' : String(value);
-                html += `<td style="border: 1px solid #424242; padding: 8px;">${escapeHtml(displayValue)}</td>`;
+                html += `<td style="border: 1px solid var(--vscode-editor-lineHighlightBorder); padding: 8px;">${escapeHtml(displayValue)}</td>`;
             });
             html += '</tr>';
         });

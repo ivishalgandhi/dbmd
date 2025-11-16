@@ -31,7 +31,7 @@
 ### From VSIX File
 
 ```bash
-code --install-extension dbmd-1.0.8.vsix
+code --install-extension dbmd-1.0.9.vsix
 ```
 
 ### Prerequisites

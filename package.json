@@ -2,7 +2,7 @@
   "name": "dbmd",
   "displayName": "DBMD: SQL Preview",
   "description": "Preview SQL queries in markdown files with SQLite and DuckDB support",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "publisher": "gandhivishal",
   "author": {
     "name": "Vishal Gandhi"
