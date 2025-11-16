@@ -6,7 +6,7 @@
 
 > Execute SQL queries and preview results directly in markdown files with support for SQLite and DuckDB databases.
 
-![DBMD Preview](images/icon.png)
+![DBMD Demo](images/dbmd.gif)
 
 ## ✨ Features
 
