@@ -31,7 +31,7 @@
 ### From VSIX File
 
 ```bash
-code --install-extension dbmd-1.0.6.vsix
+code --install-extension dbmd-1.0.8.vsix
 ```
 
 ### Prerequisites
@@ -76,13 +76,11 @@ LIMIT 5;
 
 ### Frontmatter Configuration
 
-```yaml
 ---
 database: ./path/to/database.db    # Path to database file
 dbType: sqlite                     # 'sqlite' or 'duckdb'
 showQuery: false                   # Show/hide SQL query in output
 ---
-```
 
 ### Path Examples
 
@@ -161,23 +159,6 @@ npm install
 # Test: Press F5 in VS Code to launch Extension Development Host
 ```
 
-### Building & Publishing
-
-```bash
-# Package
-npm run package        # Creates dbmd-<version>.vsix
-
-# Publish to marketplace
-npm run publish
-```
-
-**Prerequisites for publishing**:
-1. Create [Personal Access Token](https://dev.azure.com) with Marketplace scope
-2. Set token: `vsce login gandhivishal`
-3. Update version in `package.json`
-4. Update `CHANGELOG.md`
-5. Run `npm run publish`
-
 ## 🐛 Troubleshooting
 
 **Database File Not Found**  
@@ -199,7 +180,6 @@ MIT License - see [LICENSE](LICENSE)
 ## 🙏 Acknowledgments
 
 - [VS Code Extension API](https://code.visualstudio.com/api)
-- [@vscode/sqlite3](https://www.npmjs.com/package/@vscode/sqlite3)
 - [markdown-it](https://github.com/markdown-it/markdown-it)
 - [Chinook Database](https://github.com/lerocha/chinook-database)
 

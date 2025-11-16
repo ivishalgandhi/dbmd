@@ -2,6 +2,18 @@
 
 All notable changes to the "DBMD: SQL Preview" extension will be documented in this file.
 
+## [1.0.8] - 2025-11-15
+
+### Fixed
+- **Critical Windows Fix**: Removed native @vscode/sqlite3 binary causing "not a valid win32 application" error
+- Switched to CLI-only approach for both SQLite and DuckDB for true cross-platform compatibility
+- Now works on Windows x64, ARM64, macOS (Intel/Apple Silicon), and Linux without native module issues
+
+### Changed
+- Removed @vscode/sqlite3 dependency
+- Unified database access through CLI for consistency
+- Reduced package size by ~20MB
+
 ## [1.0.7] - 2025-11-15
 
 ### Fixed

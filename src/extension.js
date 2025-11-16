@@ -1,6 +1,5 @@
 const vscode = require('vscode');
 const matter = require('gray-matter');
-const sqlite3 = require('@vscode/sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 const { execSync } = require('child_process');
@@ -10,63 +9,24 @@ const markdownIt = require('markdown-it')({
     linkify: true
 });
 
-// Database connection handlers
+// Database connection handlers - CLI-only for cross-platform compatibility
 const dbHandlers = {
     sqlite: {
-        connect: (dbPath) => new Promise((resolve, reject) => {
-            try {
-                console.log('Attempting to connect to SQLite database:', dbPath);
-                const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
-                    if (err) {
-                        console.error('SQLite connection error:', err);
-                        reject(err);
-                    } else {
-                        console.log('Successfully connected to SQLite database');
-                        resolve(db);
-                    }
-                });
-            } catch (error) {
-                console.error('Error in SQLite connect:', error);
-                reject(error);
-            }
-        }),
-        query: (db, sql) => new Promise((resolve, reject) => {
+        connect: async (dbPath) => dbPath,
+        query: async (dbPath, sql) => {
             try {
                 console.log('Executing SQLite query:', sql);
-                db.all(sql, [], (err, rows) => {
-                    if (err) {
-                        console.error('SQLite query error:', err);
-                        reject(err);
-                    } else {
-                        console.log('Query executed successfully, rows:', rows?.length);
-                        resolve(rows);
-                    }
-                });
+                const result = execSync(
+                    `sqlite3 -json "${dbPath}" "${sql.replace(/"/g, '\\"')}"`,
+                    { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }
+                );
+                return JSON.parse(result);
             } catch (error) {
-                console.error('Error in SQLite query:', error);
-                reject(error);
+                console.error('SQLite query error:', error);
+                throw new Error(error.stderr || error.message);
             }
-        }),
-        close: (db) => new Promise((resolve, reject) => {
-            try {
-                if (db) {
-                    db.close((err) => {
-                        if (err) {
-                            console.error('SQLite close error:', err);
-                            reject(err);
-                        } else {
-                            console.log('SQLite connection closed successfully');
-                            resolve();
-                        }
-                    });
-                } else {
-                    resolve();
-                }
-            } catch (error) {
-                console.error('Error in SQLite close:', error);
-                reject(error);
-            }
-        })
+        },
+        close: async () => {}
     },
     duckdb: {
         connect: async (dbPath) => dbPath,

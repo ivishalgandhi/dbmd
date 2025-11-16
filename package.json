@@ -2,7 +2,7 @@
   "name": "dbmd",
   "displayName": "DBMD: SQL Preview",
   "description": "Preview SQL queries in markdown files with SQLite and DuckDB support",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "publisher": "gandhivishal",
   "author": {
     "name": "Vishal Gandhi"
@@ -107,11 +107,10 @@
     "@types/vscode": "^1.85.0",
     "@vscode/vsce": "^2.22.0",
     "eslint": "^8.54.0",
-    "typescript": "^5.3.2",
-    "node-gyp": "^10.0.1"
+    "node-gyp": "^10.0.1",
+    "typescript": "^5.3.2"
   },
   "dependencies": {
-    "@vscode/sqlite3": "^5.1.8-vscode",
     "gray-matter": "^4.0.3",
     "markdown-it": "^13.0.2"
   }
